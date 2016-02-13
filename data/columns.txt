@@ -1,0 +1,13 @@
+survival
+still_alive
+age_at_heart_attack
+pericardial_effusion
+fractional_shortening
+epss
+lvdd
+wall_motion_score
+wall_motion_index
+mult
+name
+group
+alive_at_1
