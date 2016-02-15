@@ -1,0 +1,138 @@
+%!TEX program = xelatex
+% Compile with XeLaTeX
+
+\documentclass[10pt,professionalfonts,xcolor=table]{beamer}
+
+
+%%%%%%%%%%
+% Load style file, defaults  %
+%%%%%%%%%%
+
+\input{dom_style.tex}
+
+%%%%%%%%%%%
+% Cover slide info    %
+%%%%%%%%%%%
+
+\title{UCI Echocardiogram Data}
+\author[Rocco]{Dominick Rocco}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%
+% Begin document and set Helvetica Neue font   %
+%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+\fontspec[Ligatures=TeX]{Helvetica Neue Light}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%\renewcommand{\inserttotalframenumber}{8}
+% Title Page
+
+\begin{frame}[plain]
+\titlepage
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Introduction}
+  \bangon
+  \item Echocardiogram data in UCI Machine Learning Repository
+  \bangon
+    \item \url{http://archive.ics.uci.edu/ml/datasets/Echocardiogram}
+  \bangoff
+  \gap
+  \item Downloaded data, worked in git repository
+    \bangon
+    \item \url{https://github.com/rocconnick/uci_echocardiogram}
+    \bangoff
+  \gap
+  \item Two notebooks, one module
+    \bangon
+    \item First notebook, data exploration and cleaning (\verb!initial_exploration.ipynb!)
+    \item Data loading/cleaning functionality moved to module (\verb!ecg_tools.py!)
+    \item Second notebook for regression model (\verb!survival_duration_regression.ipynb!)
+    \bangoff
+  \bangoff
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Exploration and Cleaning}
+  \bangon
+  \item Worked in a notebook
+    \bangon
+    \bong \url{https://github.com/rocconnick/uci_echocardiogram/blob/master/initial_exploration.ipynb}
+    \bangoff
+  \gap
+  \item Problems with data:
+  \bangon
+    \item One bad row
+    \item Many missing values
+    \item Missing values mostly consistent with dataset description, but not completely
+  \bangoff
+  \gap
+  \item Original dataset goal: predict which patients survive one year after heart attack
+  \bangon
+  \item One quarter of patients enrolled in study less than a year ago
+  \item Only 4 of 92 remaining patients survived less than one year
+  \bangoff
+  \gap
+  \item Instead, try to predict survival duration
+  \gap
+  \item Cleaning function ported from notebook to module
+    \bangon
+    \bong \url{https://github.com/rocconnick/uci_echocardiogram/blob/master/ecg_tools.py}
+    \bangoff
+
+  \bangoff
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Scatter Matrix}
+\begin{columns}[c]
+\column{0.4\textwidth}
+\bangon
+\item Top row: target variable vs. each other variable
+\gap
+\item Not much correlation visible, anywhere really
+\gap
+\item Originally imagined doing dimensionality reduction, but didn't seem worth it after seeing this
+\gap
+\item Missing values replaced with median of distribution for that variable
+\bangoff
+\column{0.6\textwidth}
+   \includegraphics[height=0.75\textheight]{figures/scatter_matrix.png}
+\end{columns}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Regression}
+\bangon
+\item Split data 80/20 train test
+\gap
+\item Tried several algorithms: least-squares, lasso, ridge, support vector, nearest-neighbor
+\gap
+\item Grid search for hyperparameters, 5-fold cross validation at each grid point
+  \bangon
+  \item Scikit-learn did the heavy lifting
+  \bangoff
+\gap
+\item No algorithm successfully fit the \textit{training} set, let alone the test set \footnote{Nearest-neighbor just let every point be its own neighbor}
+\bangoff
+\vspace{-10pt}
+\begin{columns}[c]
+\column{0.6\textwidth}
+\flushright
+   \includegraphics[width=0.7\textwidth]{figures/ridge_reg.png}
+\column{0.4\textwidth}
+\centering
+ Ridge regression result on \textit{training} set
+\end{columns}
+\end{frame}
+
+
+
+\end{document}
